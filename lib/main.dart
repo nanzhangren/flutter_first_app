@@ -74,51 +74,62 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  GridView getButtonView() {
+    return new GridView.count(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      crossAxisCount: 3,
+      childAspectRatio: 2,
+      crossAxisSpacing: 4.0,
+      children: <Widget>[
+        getYearButton(UtilDay.getYears()),
+        new FlatButton(
+          child: new Text(
+            '<',
+            style: new TextStyle(
+              fontSize: 30.0
+            )
+          ),
+          onPressed: () {},
+        ),
+        new FlatButton(
+          child: new Text(
+            '>',
+            style: new TextStyle(
+              fontSize: 30.0
+            )
+          ),
+          onPressed: () {},
+        )
+      ],
+    );
+  }
+
+  GridView getDaysView(days) {
+    List<Container> gridData = getGridData(days);
+    return new GridView.count(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 3.0,
+      crossAxisSpacing: 3.0,
+      crossAxisCount: 7,
+      childAspectRatio: 1.0,
+      children: gridData,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Container> gridData = getGridData(31);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: new GridView.count(
+      body: new ListView(
+        shrinkWrap: true,
         padding: const EdgeInsets.all(10.0),
-        crossAxisCount: 1,
         children: <Widget>[
-          new GridView.count(
-            crossAxisCount: 3,
-            childAspectRatio: 2,
-            crossAxisSpacing: 4.0,
-            children: <Widget>[
-              getYearButton(UtilDay.getYears()),
-              new FlatButton(
-                child: new Text(
-                  '<',
-                  style: new TextStyle(
-                    fontSize: 30.0
-                  )
-                ),
-                onPressed: () {},
-              ),
-              new FlatButton(
-                child: new Text(
-                  '>',
-                  style: new TextStyle(
-                    fontSize: 30.0
-                  )
-                ),
-                onPressed: () {},
-              )
-            ],
-          ),
-          // new GridView.count(
-          //   mainAxisSpacing: 3.0,
-          //   crossAxisSpacing: 3.0,
-          //   crossAxisCount: 7,
-          //   childAspectRatio: 1.0,
-          //   children: gridData,
-          // )
+          getButtonView(),
+          getDaysView(31)
         ],
       )
     );
