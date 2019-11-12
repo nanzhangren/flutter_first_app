@@ -30,6 +30,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Container> getGridData(days) {
     final monthDayArr = <Container>[];
+    ['日', '一', '二', '三', '四', '五', '六'].forEach((weekFlag) {
+      monthDayArr.add(
+        new Container(
+          alignment: Alignment.center,
+          color: Colors.blue,
+          child: new Text(
+            weekFlag,
+            style: new TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold
+            )
+          ),
+        )
+      );
+    });
     for (var i = 1; i <= days; i++) {
       final dayValue = i.toString();
       monthDayArr.add(

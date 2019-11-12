@@ -65,4 +65,8 @@ class UtilDay {
     return yearArr;
   }
 
+  static int getLastNDayOfMonth(year, month, days) {
+    final totalDays = getOneMonthDays(year, month);
+    return totalDays - days + 1;
+  }
 }
