@@ -28,43 +28,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int dropdownValue;
 
-  List<Container> getGridData(days) {
-    final monthDayArr = <Container>[];
-    ['日', '一', '二', '三', '四', '五', '六'].forEach((weekFlag) {
-      monthDayArr.add(
-        new Container(
-          alignment: Alignment.center,
-          color: Colors.blue,
-          child: new Text(
-            weekFlag,
-            style: new TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.bold
-            )
-          ),
-        )
-      );
-    });
-    for (var i = 1; i <= days; i++) {
-      final dayValue = i.toString();
-      monthDayArr.add(
-        new Container(
-          alignment: Alignment.center,
-          color: Colors.blue,
-          child: new Text(
-            dayValue,
-            style: new TextStyle(
-              color: Colors.white,
-              fontSize: 14
-            )
-          ),
-        )
-      );
-    }
-    return monthDayArr;
-  }
-
   DropdownButton getYearButton(List<int> yearArr) {
     List<DropdownMenuItem> dropdownItems = <DropdownMenuItem>[];
     yearArr.forEach((year) {
@@ -121,8 +84,51 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  GridView getDaysView(days) {
-    List<Container> gridData = getGridData(days);
+  GridView getWeekTitleView() {
+    final weekTitleArr = <Container>[];
+    ['日', '一', '二', '三', '四', '五', '六'].forEach((weekFlag) {
+      weekTitleArr.add(
+        new Container(
+          alignment: Alignment.center,
+          color: Colors.blue,
+          child: new Text(
+            weekFlag,
+            style: new TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold
+            )
+          ),
+        )
+      );
+    });
+    return new GridView.count(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      crossAxisCount: 7,
+      childAspectRatio: 1.5,
+      mainAxisSpacing: 3.0,
+      crossAxisSpacing: 3.0,
+      children: weekTitleArr,
+    );
+  }
+
+  GridView getMonthView(days) {
+    List<Container> gridData = <Container>[];
+    days.forEach((int item) {
+      gridData.add(new Container(
+          alignment: Alignment.center,
+          color: Colors.blue,
+          child: new Text(
+            item.toString(),
+            style: new TextStyle(
+              color: Colors.white,
+              fontSize: 14
+            )
+          )
+        )
+      );
+    });
     return new GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -136,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final shownDays = UtilDay.getCurrentMonthShownDays();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -145,8 +152,12 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.all(10.0),
         children: <Widget>[
           getButtonView(),
-          getDaysView(31)
-        ],
+          Padding(
+            padding: EdgeInsets.only(bottom: 6.0),
+            child: getWeekTitleView(),
+          ),
+          getMonthView(shownDays)
+        ]
       )
     );
   }
