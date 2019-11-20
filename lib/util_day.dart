@@ -2,6 +2,7 @@
 class UtilDay {
 
   static const minYear = 1900;
+  static const maxYear = minYear + 150;
 
   static int getOneYearDays(int year) {
     if (year % 4 == 0 && year % 100 != 0) {
@@ -58,30 +59,41 @@ class UtilDay {
     return totalDays;
   }
 
-  static List<int> getYears([int startYear = UtilDay.minYear]) {
+  static List<int> getYears() {
     // TODO: 此处可以添加缓存，只计算一次即可
     List<int> yearArr = <int>[];
-    final endYear = startYear + 150;
-    for (int i = startYear; i <= endYear; i++) {
+    for (int i = minYear; i <= maxYear; i++) {
       yearArr.add(i);
     }
     return yearArr;
   }
 
+  // TODO: 上一月、下一月剩余天数计算单独抽离方法
   static List<int> getMonthShownDays(year, month, [int firstShownWeekday = 7]) {
     final shownDays = <int>[];
 
     /* 计算本月第一周在1号之前的天数 */
-    // 本月第一天不是开始星期数，需要展示上个月日期；否则不展示上个月日期
-    final weekdayOfMonthFirstDay = new DateTime(year, month, 1).weekday;
-    if (weekdayOfMonthFirstDay != firstShownWeekday) {
-      final lastMonthDays = getOneMonthDays(year, month - 1);
-      // 第一个展示的上月日期
-      int firstShownDay = lastMonthDays - weekdayOfMonthFirstDay + 1;
-      // 上一月剩余日期
-      for (int i = firstShownDay; i <= lastMonthDays; i++) {
-        shownDays.add(i);
-      }
+    // 计算上个月天数有两种情况：
+    // （1）本月第一天星期数 >= 开始星期数【if 逻辑】
+    //      本月第一周剩余天数 = 本月第一天星期数 - 开始星期数
+    // （2）本月第一天星期数 < 开始星期数【else 逻辑】
+    //      本月第一周剩余天数分为两段，星期日之前 + 星期日之后
+    //      星期日之前天数 = 7 - 开始星期数 + 1
+    //      星期日之后天数 = 本月第一天星期数 - 1
+    final monthFirstWeekDay = new DateTime(year, month, 1).weekday;
+    int previousMonthDays = 0;
+    if (monthFirstWeekDay >= firstShownWeekday) {
+      previousMonthDays += monthFirstWeekDay - firstShownWeekday;
+    } else {
+      previousMonthDays += 8 - firstShownWeekday;
+      previousMonthDays += monthFirstWeekDay - 1;
+    }
+    final lastMonthDays = getOneMonthDays(year, month - 1);
+    // 第一个展示的上月日期
+    int firstShownDay = lastMonthDays - previousMonthDays + 1;
+    // 上一月剩余日期
+    for (int i = firstShownDay; i <= lastMonthDays; i++) {
+      shownDays.add(i);
     }
 
     /* 本月日期 */
@@ -92,24 +104,20 @@ class UtilDay {
 
     /* 计算本月最后一周在最后一天之后的天数 */
     // 计算下个月天数有两种情况：
-    // （1）本月最后一天星期数 < 开始星期数【else 逻辑】
-    //      肯定是在星期日之后，所以用最后显示星期数 - 本月最后一天星期数即可
-    // （2）本月最后一天星期数 > 开始星期数【if 逻辑】
-    //      本周时间分为两段，星期日之前 + 星期日之后
-    //      星期日之前天数有两种情况：
-    //        a. 开始星期数是星期一，这时不存在星期日之前天数
-    //        b. 开始星期数不是星期一，星期日之前剩余天数 = 7 - 本月最后一天星期数
+    // （1）结束星期数 >= 本月最后一天星期数【if 逻辑】
+    //      本月最后一周剩余天数 = 结束星期数 - 本月最后一天星期数
+    // （2）结束星期数 < 本月最后一天星期数【else 逻辑】
+    //      本月最后一周剩余天数分为两段，星期日之前 + 星期日之后
+    //      星期日之前天数 = 7 - 本月最后一天星期数
     //      星期日之后天数 = 结束星期数
-    int nextMonthDays = 0;
-    final weekdayOfMonthLastDay = new DateTime(year, month, currentMonthDays).weekday;
+    final monthLastWeekDay = new DateTime(year, month, currentMonthDays).weekday;
     final lastShownWeekday = firstShownWeekday == 1 ? 7 : firstShownWeekday - 1;
-    if (weekdayOfMonthLastDay >= firstShownWeekday) {
-      if (firstShownWeekday != 1) {
-        nextMonthDays += 7 - weekdayOfMonthLastDay;
-      }
-      nextMonthDays += lastShownWeekday;
+    int nextMonthDays = 0;
+    if (lastShownWeekday >= monthLastWeekDay) {
+      nextMonthDays += lastShownWeekday - monthLastWeekDay;
     } else {
-      nextMonthDays += lastShownWeekday - weekdayOfMonthLastDay;
+      nextMonthDays += 7 - monthLastWeekDay;
+      nextMonthDays += lastShownWeekday;
     }
     
     /* 日历显示 6 行，所以周数不够时下个月天数增加一周 */
@@ -135,4 +143,5 @@ class UtilDay {
     final month = currentDateTime.month;
     return getMonthShownDays(year, month, firstShownWeekday);
   }
+
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './util_day.dart';
+import './util_week.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,8 +29,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int yearDropdownValue = new DateTime.now().year;
   int monthDropdownValue = new DateTime.now().month;
+  List<DropdownMenuItem> yearDropdownItems = <DropdownMenuItem>[];
   int firstShownWeekday = 7;
   List<int> shownDays;
+  int maxYear = UtilDay.maxYear;
 
   onYearChange(int value) {
     setState(() {
@@ -69,20 +72,22 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         monthDropdownValue += 1;
       }
+      if (yearDropdownValue > maxYear) {
+        maxYear = yearDropdownValue;
+        yearDropdownItems.add(
+          new DropdownMenuItem(
+            child: new Text(yearDropdownValue.toString() + '年'),
+            value: yearDropdownValue
+          )
+        );
+      }
       shownDays = UtilDay.getMonthShownDays(yearDropdownValue, monthDropdownValue, firstShownWeekday);
     });
   }
 
-  DropdownButton getYearButton(List<int> yearArr) {
-    List<DropdownMenuItem> dropdownItems = <DropdownMenuItem>[];
-    yearArr.forEach((year) {
-      dropdownItems.add(new DropdownMenuItem(
-        child: new Text(year.toString() + '年'),
-        value: year,
-      ));
-    });
+  DropdownButton getYearButton() {
     return new DropdownButton(
-      items: dropdownItems,
+      items: yearDropdownItems,
       hint: new Text('请选择：'),
       value: yearDropdownValue,
       underline: new Container(),
@@ -116,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         new Expanded(
           flex: 3,
-          child: getYearButton(UtilDay.getYears())
+          child: getYearButton()
         ),
         new Expanded(
           flex: 3,
@@ -155,9 +160,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   GridView getWeekTitleView() {
-    final weekTitleArr = <Container>[];
-    ['日', '一', '二', '三', '四', '五', '六'].forEach((weekFlag) {
-      weekTitleArr.add(
+    final weekTitleViewArr = <Container>[];
+    final weekTitleArr = UtilWeek.getWeekTitle(firstShownWeekday);
+    weekTitleArr.forEach((weekFlag) {
+      weekTitleViewArr.add(
         new Container(
           alignment: Alignment.center,
           color: Colors.blue,
@@ -179,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
       childAspectRatio: 1.5,
       mainAxisSpacing: 3.0,
       crossAxisSpacing: 3.0,
-      children: weekTitleArr,
+      children: weekTitleViewArr,
     );
   }
 
@@ -213,7 +219,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     shownDays = UtilDay.getCurrentMonthShownDays(firstShownWeekday);
+
+    final yearArr = UtilDay.getYears();
+    yearArr.forEach((year) {
+      yearDropdownItems.add(new DropdownMenuItem(
+        child: new Text(year.toString() + '年'),
+        value: year
+      ));
+    });
   }
 
   @override
@@ -236,4 +251,5 @@ class _MyHomePageState extends State<MyHomePage> {
       )
     );
   }
+
 }
