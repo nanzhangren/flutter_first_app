@@ -1,6 +1,8 @@
 
 class UtilDay {
 
+  static const minYear = 1900;
+
   static int getOneYearDays(int year) {
     if (year % 4 == 0 && year % 100 != 0) {
       return 366;
@@ -56,10 +58,11 @@ class UtilDay {
     return totalDays;
   }
 
-  static List<int> getYears() {
+  static List<int> getYears([int startYear = UtilDay.minYear]) {
     // TODO: 此处可以添加缓存，只计算一次即可
     List<int> yearArr = <int>[];
-    for (int i = 1900; i <= 2050; i++) {
+    final endYear = startYear + 150;
+    for (int i = startYear; i <= endYear; i++) {
       yearArr.add(i);
     }
     return yearArr;
@@ -130,6 +133,6 @@ class UtilDay {
     DateTime currentDateTime = new DateTime.now();
     final year = currentDateTime.year;
     final month = currentDateTime.month;
-    return getMonthShownDays(year, month);
+    return getMonthShownDays(year, month, firstShownWeekday);
   }
 }

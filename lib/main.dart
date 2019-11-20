@@ -26,7 +26,52 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int dropdownValue;
+  int yearDropdownValue = new DateTime.now().year;
+  int monthDropdownValue = new DateTime.now().month;
+  int firstShownWeekday = 7;
+  List<int> shownDays;
+
+  onYearChange(int value) {
+    setState(() {
+      yearDropdownValue = value;
+      shownDays = UtilDay.getMonthShownDays(value, monthDropdownValue, firstShownWeekday);
+    });
+  }
+
+  onMonthChange(int value) {
+    setState(() {
+      monthDropdownValue = value;
+      shownDays = UtilDay.getMonthShownDays(yearDropdownValue, value, firstShownWeekday);
+    });
+  }
+
+  onLeftButtonClicked() {
+    setState(() {
+      // 边界值判断
+      if (yearDropdownValue == UtilDay.minYear && monthDropdownValue == 1) {
+        return;
+      }
+      if (monthDropdownValue == 1) {
+        yearDropdownValue -= 1;
+        monthDropdownValue = 12;
+      } else {
+        monthDropdownValue -= 1;
+      }
+      shownDays = UtilDay.getMonthShownDays(yearDropdownValue, monthDropdownValue, firstShownWeekday);
+    });
+  }
+
+  onRightButtonClicked() {
+    setState(() {
+      if (monthDropdownValue == 12) {
+        yearDropdownValue += 1;
+        monthDropdownValue = 1;
+      } else {
+        monthDropdownValue += 1;
+      }
+      shownDays = UtilDay.getMonthShownDays(yearDropdownValue, monthDropdownValue, firstShownWeekday);
+    });
+  }
 
   DropdownButton getYearButton(List<int> yearArr) {
     List<DropdownMenuItem> dropdownItems = <DropdownMenuItem>[];
@@ -39,48 +84,73 @@ class _MyHomePageState extends State<MyHomePage> {
     return new DropdownButton(
       items: dropdownItems,
       hint: new Text('请选择：'),
-      value: dropdownValue,
+      value: yearDropdownValue,
       underline: new Container(),
       onChanged: (newValue) {
-        onSelectChange(newValue);
+        onYearChange(newValue);
       }
     );
   }
 
-  onSelectChange(int value) {
-    setState(() {
-      dropdownValue = value;
-    });
+  DropdownButton getMonthButton() {
+    List<DropdownMenuItem> dropdownItems = <DropdownMenuItem>[];
+    for (int i = 1; i <= 12; i++) {
+      dropdownItems.add(new DropdownMenuItem(
+        child: new Text(i.toString() + '月'),
+        value: i,
+      ));
+    }
+    return new DropdownButton(
+      items: dropdownItems,
+      hint: new Text('请选择：'),
+      value: monthDropdownValue,
+      underline: new Container(),
+      onChanged: (newValue) {
+        onMonthChange(newValue);
+      }
+    );
   }
 
-  GridView getButtonView() {
-    return new GridView.count(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
-      childAspectRatio: 2,
-      crossAxisSpacing: 4.0,
-      children: <Widget>[
-        getYearButton(UtilDay.getYears()),
-        new FlatButton(
-          child: new Text(
-            '<',
-            style: new TextStyle(
-              fontSize: 30.0
-            )
-          ),
-          onPressed: () {},
+  Row getButtonView() {
+    return new Row(
+      children: [
+        new Expanded(
+          flex: 3,
+          child: getYearButton(UtilDay.getYears())
         ),
-        new FlatButton(
-          child: new Text(
-            '>',
-            style: new TextStyle(
-              fontSize: 30.0
-            )
-          ),
-          onPressed: () {},
+        new Expanded(
+          flex: 3,
+          child: getMonthButton()
+        ),
+        new Expanded(
+          flex: 2,
+          child: new FlatButton(
+            child: new Text(
+              '<',
+              style: new TextStyle(
+                fontSize: 20.0
+              )
+            ),
+            onPressed: () {
+              onLeftButtonClicked();
+            },
+          )
+        ),
+        new Expanded(
+          flex: 2,
+          child: new FlatButton(
+            child: new Text(
+              '>',
+              style: new TextStyle(
+                fontSize: 20.0
+              )
+            ),
+            onPressed: () {
+              onRightButtonClicked();
+            },
+          )
         )
-      ],
+      ]
     );
   }
 
@@ -141,8 +211,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    shownDays = UtilDay.getCurrentMonthShownDays(firstShownWeekday);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final shownDays = UtilDay.getCurrentMonthShownDays();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
