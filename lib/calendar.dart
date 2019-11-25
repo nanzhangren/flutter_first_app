@@ -2,6 +2,50 @@ import 'package:flutter/material.dart';
 import './util_day.dart';
 import './util_week.dart';
 
+class CalendarDay extends StatelessWidget {
+  CalendarDay({
+    Key key,
+    @required this.dayValue,
+    @required this.dayIndex,
+    @required this.isSelected,
+    @required this.isCurrentDay,
+    @required this.onSelected
+  }) : super(key: key);
+
+  final String dayValue;
+  final int dayIndex;
+  final bool isSelected;
+  final bool isCurrentDay;
+  final Function onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return new GestureDetector(
+      onTap: () {
+        onSelected(dayIndex);
+      },
+      child: new Container(
+        alignment: Alignment.center,
+        decoration: new BoxDecoration(
+          color: isCurrentDay ? Colors.orange : Colors.white,
+          border: isSelected ? Border.all(
+            width: 3.0,
+            color: Colors.orange,
+            style: BorderStyle.solid
+          ) : null
+        ),
+        child: new Text(
+          dayValue,
+          style: new TextStyle(
+            color: isCurrentDay ? Colors.white : Colors.black,
+            fontSize: 14
+          )
+        )
+      )
+    );
+  }
+}
+
 class Calendar extends StatefulWidget {
   @override
   _CalendarState createState() => _CalendarState();
@@ -14,6 +58,8 @@ class _CalendarState extends State<Calendar> {
   int firstShownWeekday = 7;
   List<int> shownDays;
   int maxYear = UtilDay.maxYear;
+  int selectedDayIndex = 0;
+  int currentDayIndex = 0;
 
   onYearChange(int value) {
     setState(() {
@@ -63,6 +109,12 @@ class _CalendarState extends State<Calendar> {
         );
       }
       shownDays = UtilDay.getMonthShownDays(yearDropdownValue, monthDropdownValue, firstShownWeekday);
+    });
+  }
+
+  onSelectedDayChange(int newDayIndex) {
+    setState(() {
+      selectedDayIndex = newDayIndex;
     });
   }
 
@@ -140,30 +192,19 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  GridView getWeekTitleView(BuildContext context) {
-    final weekTitleViewArr = <FlatButton>[];
+  GridView getWeekTitleView() {
+    final weekTitleViewArr = <CalendarDay>[];
     final weekTitleArr = UtilWeek.getWeekTitle(firstShownWeekday);
     weekTitleArr.forEach((weekFlag) {
       weekTitleViewArr.add(
-        new FlatButton(
-          color: Colors.blue,
-          shape: null,
-          child: new Text(
-            weekFlag,
-            style: new TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.bold
-            )
-          ),
-          onPressed: () {
-            // context.shape = new BeveledRectangleBorder(
-            //   side: new BorderSide(
-            //     width: 2.0,
-            //     color: Color.fromARGB(255, 255, 0, 0)
-            //   )
-            // );
-          },
+        new CalendarDay(
+          dayValue: weekFlag,
+          dayIndex: -1,
+          isSelected: false,
+          isCurrentDay: false,
+          onSelected: (int newDayIndex) {
+            // do nothing
+          }
         )
       );
     });
@@ -179,18 +220,17 @@ class _CalendarState extends State<Calendar> {
   }
 
   GridView getMonthView(days) {
-    List<Container> gridData = <Container>[];
+    List<CalendarDay> gridData = <CalendarDay>[];
+    int count = 0;
     days.forEach((int item) {
-      gridData.add(new Container(
-          alignment: Alignment.center,
-          color: Colors.blue,
-          child: new Text(
-            item.toString(),
-            style: new TextStyle(
-              color: Colors.white,
-              fontSize: 14
-            )
-          )
+      count++;
+      gridData.add(
+        new CalendarDay(
+          dayValue: item.toString(),
+          dayIndex: count,
+          isSelected: count == selectedDayIndex,
+          isCurrentDay: count == currentDayIndex,
+          onSelected: onSelectedDayChange,
         )
       );
     });
@@ -210,6 +250,7 @@ class _CalendarState extends State<Calendar> {
     super.initState();
 
     shownDays = UtilDay.getCurrentMonthShownDays(firstShownWeekday);
+    currentDayIndex = shownDays.indexOf(1) + new DateTime.now().day;
 
     final yearArr = UtilDay.getYears();
     yearArr.forEach((year) {
@@ -228,11 +269,10 @@ class _CalendarState extends State<Calendar> {
         getButtonView(),
         Padding(
           padding: EdgeInsets.only(bottom: 6.0),
-          child: getWeekTitleView(context),
+          child: getWeekTitleView(),
         ),
         getMonthView(shownDays)
       ]
     );
   }
-
 }

@@ -143,5 +143,4 @@ class UtilDay {
     final month = currentDateTime.month;
     return getMonthShownDays(year, month, firstShownWeekday);
   }
-
 }
