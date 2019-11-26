@@ -2,32 +2,45 @@ import 'package:flutter/material.dart';
 import './util_day.dart';
 import './util_week.dart';
 
-class CalendarDay extends StatelessWidget {
-  CalendarDay({
-    Key key,
-    @required this.dayValue,
-    @required this.dayIndex,
-    @required this.isSelected,
-    @required this.isCurrentDay,
-    @required this.onSelected
-  }) : super(key: key);
-
+class _CalendarDay extends StatelessWidget {
   final String dayValue;
-  final int dayIndex;
   final bool isSelected;
   final bool isCurrentDay;
   final Function onSelected;
+  final bool isPreviousMonthDay;
+  final bool isNextMonthDay;
+
+  _CalendarDay({
+    Key key,
+    @required this.dayValue,
+    @required this.isSelected,
+    @required this.isCurrentDay,
+    @required this.onSelected,
+    this.isPreviousMonthDay = false,
+    this.isNextMonthDay = false
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Color fontColor = Colors.black;
+    Color backColor = Colors.white;
+
+    if (isPreviousMonthDay || isNextMonthDay) {
+      fontColor = Colors.grey;
+    }
+    if (isCurrentDay) {
+      fontColor = Colors.white;
+      backColor = Colors.orange;
+    }
+
     return new GestureDetector(
       onTap: () {
-        onSelected(dayIndex);
+        onSelected(dayValue, isPreviousMonthDay, isNextMonthDay);
       },
       child: new Container(
         alignment: Alignment.center,
         decoration: new BoxDecoration(
-          color: isCurrentDay ? Colors.orange : Colors.white,
+          color: backColor,
           border: isSelected ? Border.all(
             width: 3.0,
             color: Colors.orange,
@@ -37,7 +50,7 @@ class CalendarDay extends StatelessWidget {
         child: new Text(
           dayValue,
           style: new TextStyle(
-            color: isCurrentDay ? Colors.white : Colors.black,
+            color: fontColor,
             fontSize: 14
           )
         )
@@ -52,85 +65,110 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  int yearDropdownValue = new DateTime.now().year;
-  int monthDropdownValue = new DateTime.now().month;
-  List<DropdownMenuItem> yearDropdownItems = <DropdownMenuItem>[];
-  int firstShownWeekday = 7;
-  List<int> shownDays;
-  int maxYear = UtilDay.maxYear;
-  int selectedDayIndex = 0;
-  int currentDayIndex = 0;
+  int _selectedYear = new DateTime.now().year;
+  int _selectedMonth = new DateTime.now().month;
+  List<DropdownMenuItem> _yearDropdownItems = <DropdownMenuItem>[];
+  int _firstShownWeekday = 7;
+  List<int> _shownDays;
+  int _maxYear = UtilDay.maxYear;
+  int _selectedDay = 0;
 
-  onYearChange(int value) {
+  _onYearChange(int value) {
     setState(() {
-      yearDropdownValue = value;
-      shownDays = UtilDay.getMonthShownDays(value, monthDropdownValue, firstShownWeekday);
+      _selectedYear = value;
+      _shownDays = UtilDay.getMonthShownDays(value, _selectedMonth, _firstShownWeekday);
     });
   }
 
-  onMonthChange(int value) {
+  _onMonthChange(int value) {
     setState(() {
-      monthDropdownValue = value;
-      shownDays = UtilDay.getMonthShownDays(yearDropdownValue, value, firstShownWeekday);
+      _selectedMonth = value;
+      _shownDays = UtilDay.getMonthShownDays(_selectedYear, value, _firstShownWeekday);
     });
   }
 
-  onLeftButtonClicked() {
+  _onLeftButtonClicked() {
     setState(() {
-      // 边界值判断
-      if (yearDropdownValue == UtilDay.minYear && monthDropdownValue == 1) {
+      // Varify the minimum year.
+      if (_selectedYear == UtilDay.minYear && _selectedMonth == 1) {
         return;
       }
-      if (monthDropdownValue == 1) {
-        yearDropdownValue -= 1;
-        monthDropdownValue = 12;
+      if (_selectedMonth == 1) {
+        _selectedYear -= 1;
+        _selectedMonth = 12;
       } else {
-        monthDropdownValue -= 1;
+        _selectedMonth -= 1;
       }
-      shownDays = UtilDay.getMonthShownDays(yearDropdownValue, monthDropdownValue, firstShownWeekday);
+      _shownDays = UtilDay.getMonthShownDays(_selectedYear, _selectedMonth, _firstShownWeekday);
     });
   }
 
-  onRightButtonClicked() {
+  _onRightButtonClicked() {
     setState(() {
-      if (monthDropdownValue == 12) {
-        yearDropdownValue += 1;
-        monthDropdownValue = 1;
+      if (_selectedMonth == 12) {
+        _selectedYear += 1;
+        _selectedMonth = 1;
       } else {
-        monthDropdownValue += 1;
+        _selectedMonth += 1;
       }
-      if (yearDropdownValue > maxYear) {
-        maxYear = yearDropdownValue;
-        yearDropdownItems.add(
+      if (_selectedYear > _maxYear) {
+        _maxYear = _selectedYear;
+        _yearDropdownItems.add(
           new DropdownMenuItem(
-            child: new Text(yearDropdownValue.toString() + '年'),
-            value: yearDropdownValue
+            child: new Text(_selectedYear.toString() + '年'),
+            value: _selectedYear
           )
         );
       }
-      shownDays = UtilDay.getMonthShownDays(yearDropdownValue, monthDropdownValue, firstShownWeekday);
+      _shownDays = UtilDay.getMonthShownDays(_selectedYear, _selectedMonth, _firstShownWeekday);
     });
   }
 
-  onSelectedDayChange(int newDayIndex) {
+  _onSelectedDayChange(String newDayValue, bool isPreviousMonthDay, bool isNextMonthDay) {
     setState(() {
-      selectedDayIndex = newDayIndex;
+      _selectedDay = int.parse(newDayValue);
+      if (isPreviousMonthDay) {
+        _onLeftButtonClicked();
+      } else if (isNextMonthDay) {
+        _onRightButtonClicked();
+      }
     });
   }
 
-  DropdownButton getYearButton() {
+  _getCurrentDayIndex(List<int> days, int firstDayIndex, int lastDayIndex) {
+    final DateTime currentDate = new DateTime.now();
+    final int currentMonth = currentDate.month;
+    final int currentDay = currentDate.day;
+    int currentDayIndex = -1;
+
+    // Current month is selected, the highlight day is in the middle of calendar view.
+    if (_selectedMonth == currentMonth) {
+      currentDayIndex = days.indexOf(currentDay, firstDayIndex);
+    }
+    // Previous month is selected, the highlight day may be in the bottom of calendar view.
+    else if (_selectedMonth == currentMonth - 1) {
+      currentDayIndex = days.indexOf(currentDay, lastDayIndex + 1);
+    }
+    // Next month is selected, the highlight day may be in the top of calendar view.
+    else if (_selectedMonth == currentMonth + 1) {
+      currentDayIndex = days.take(firstDayIndex).toList().indexOf(currentDay);
+    }
+    return currentDayIndex;
+  }
+
+  DropdownButton _getYearButton() {
     return new DropdownButton(
-      items: yearDropdownItems,
+      items: _yearDropdownItems,
       hint: new Text('请选择：'),
-      value: yearDropdownValue,
+      value: _selectedYear,
       underline: new Container(),
       onChanged: (newValue) {
-        onYearChange(newValue);
+        _onYearChange(newValue);
       }
     );
   }
 
-  DropdownButton getMonthButton() {
+  DropdownButton _getMonthButton() {
     List<DropdownMenuItem> dropdownItems = <DropdownMenuItem>[];
     for (int i = 1; i <= 12; i++) {
       dropdownItems.add(new DropdownMenuItem(
@@ -141,24 +179,24 @@ class _CalendarState extends State<Calendar> {
     return new DropdownButton(
       items: dropdownItems,
       hint: new Text('请选择：'),
-      value: monthDropdownValue,
+      value: _selectedMonth,
       underline: new Container(),
       onChanged: (newValue) {
-        onMonthChange(newValue);
+        _onMonthChange(newValue);
       }
     );
   }
 
-  Row getButtonView() {
+  Row _getButtonView() {
     return new Row(
       children: [
         new Expanded(
           flex: 3,
-          child: getYearButton()
+          child: _getYearButton()
         ),
         new Expanded(
           flex: 3,
-          child: getMonthButton()
+          child: _getMonthButton()
         ),
         new Expanded(
           flex: 2,
@@ -170,7 +208,7 @@ class _CalendarState extends State<Calendar> {
               )
             ),
             onPressed: () {
-              onLeftButtonClicked();
+              _onLeftButtonClicked();
             },
           )
         ),
@@ -184,7 +222,7 @@ class _CalendarState extends State<Calendar> {
               )
             ),
             onPressed: () {
-              onRightButtonClicked();
+              _onRightButtonClicked();
             },
           )
         )
@@ -192,17 +230,16 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  GridView getWeekTitleView() {
-    final weekTitleViewArr = <CalendarDay>[];
-    final weekTitleArr = UtilWeek.getWeekTitle(firstShownWeekday);
+  GridView _getWeekTitleView() {
+    final weekTitleViewArr = <_CalendarDay>[];
+    final weekTitleArr = UtilWeek.getWeekTitle(_firstShownWeekday);
     weekTitleArr.forEach((weekFlag) {
       weekTitleViewArr.add(
-        new CalendarDay(
+        new _CalendarDay(
           dayValue: weekFlag,
-          dayIndex: -1,
           isSelected: false,
           isCurrentDay: false,
-          onSelected: (int newDayIndex) {
+          onSelected: (String newDayValue, bool isPreviousMonthDay, bool isNextMonthDay) {
             // do nothing
           }
         )
@@ -219,21 +256,35 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  GridView getMonthView(days) {
-    List<CalendarDay> gridData = <CalendarDay>[];
-    int count = 0;
-    days.forEach((int item) {
-      count++;
+  GridView _getMonthView(days) {
+    final int firstDayIndex = days.indexOf(1);
+    int lastDayIndex = days.lastIndexOf(1);
+
+    // Verify the value of lastDayIndex.
+    if (lastDayIndex == -1) {
+      lastDayIndex = days.length - 1;
+    } else {
+      lastDayIndex -= 1;
+    }
+
+    final int selectedDayIndex = days.indexOf(_selectedDay, firstDayIndex);
+    final int currentDayIndex = _getCurrentDayIndex(days, firstDayIndex, lastDayIndex);
+    List<_CalendarDay> gridData = <_CalendarDay>[];
+    int index = 0;
+    days.forEach((int day) {
       gridData.add(
-        new CalendarDay(
-          dayValue: item.toString(),
-          dayIndex: count,
-          isSelected: count == selectedDayIndex,
-          isCurrentDay: count == currentDayIndex,
-          onSelected: onSelectedDayChange,
+        new _CalendarDay(
+          dayValue: day.toString(),
+          isSelected: index == selectedDayIndex,
+          isCurrentDay: index == currentDayIndex,
+          onSelected: _onSelectedDayChange,
+          isPreviousMonthDay: index < firstDayIndex,
+          isNextMonthDay: index > lastDayIndex,
         )
       );
+      index++;
     });
+
     return new GridView.count(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -241,7 +292,7 @@ class _CalendarState extends State<Calendar> {
       crossAxisSpacing: 3.0,
       crossAxisCount: 7,
       childAspectRatio: 1.0,
-      children: gridData,
+      children: gridData
     );
   }
 
@@ -249,12 +300,11 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
 
-    shownDays = UtilDay.getCurrentMonthShownDays(firstShownWeekday);
-    currentDayIndex = shownDays.indexOf(1) + new DateTime.now().day;
+    _shownDays = UtilDay.getCurrentMonthShownDays(_firstShownWeekday);
 
     final yearArr = UtilDay.getYears();
     yearArr.forEach((year) {
-      yearDropdownItems.add(new DropdownMenuItem(
+      _yearDropdownItems.add(new DropdownMenuItem(
         child: new Text(year.toString() + '年'),
         value: year
       ));
@@ -266,12 +316,12 @@ class _CalendarState extends State<Calendar> {
     return new ListView(
       shrinkWrap: true,
       children: <Widget>[
-        getButtonView(),
+        _getButtonView(),
         Padding(
           padding: EdgeInsets.only(bottom: 6.0),
-          child: getWeekTitleView(),
+          child: _getWeekTitleView(),
         ),
-        getMonthView(shownDays)
+        _getMonthView(_shownDays)
       ]
     );
   }
