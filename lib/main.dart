@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './calendar.dart';
+import './common/resource.dart';
 
 void main() => runApp(App());
 
@@ -7,11 +8,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '流水账',
+      title: Resource.appTitle,
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new HomePage(title: '流水账')
+      home: new HomePage(title: Resource.appTitle)
     );
   }
 }

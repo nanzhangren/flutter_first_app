@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import './util_day.dart';
-import './util_week.dart';
+import './common/util_day.dart';
+import './common/util_week.dart';
+import './common/resource.dart';
 
 class _CalendarDay extends StatelessWidget {
   final String dayValue;
@@ -159,7 +160,7 @@ class _CalendarState extends State<Calendar> {
   DropdownButton _getYearButton() {
     return new DropdownButton(
       items: _yearDropdownItems,
-      hint: new Text('请选择：'),
+      hint: new Text(Resource.selectTip),
       value: _selectedYear,
       underline: new Container(),
       onChanged: (newValue) {
@@ -172,7 +173,7 @@ class _CalendarState extends State<Calendar> {
     List<DropdownMenuItem> dropdownItems = <DropdownMenuItem>[];
     for (int i = 1; i <= 12; i++) {
       dropdownItems.add(new DropdownMenuItem(
-        child: new Text(i.toString() + '月'),
+        child: new Text(i.toString() + Resource.monthUnit),
         value: i,
       ));
     }
@@ -305,7 +306,7 @@ class _CalendarState extends State<Calendar> {
     final yearArr = UtilDay.getYears();
     yearArr.forEach((year) {
       _yearDropdownItems.add(new DropdownMenuItem(
-        child: new Text(year.toString() + '年'),
+        child: new Text(year.toString() + Resource.yearUnit),
         value: year
       ));
     });
