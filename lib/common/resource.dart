@@ -9,4 +9,7 @@ class Resource {
 
   static String edit = '编辑';
   static String delete = '删除';
+
+  static String done = '完成';
+  static String doing = '正在做';
 }
