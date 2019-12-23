@@ -7,4 +7,6 @@ class Resource {
   static String monthUnit = '月';
   static String yearUnit = '年';
 
+  static String edit = '编辑';
+  static String delete = '删除';
 }

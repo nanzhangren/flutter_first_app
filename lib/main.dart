@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './common/resource.dart';
 import './calendar.dart';
-import './task.dart';
+import './plan.dart';
 
 void main() => runApp(App());
 
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         new Calendar()
       ]
     ),
-    new Task(),
+    new Plan(),
     Text('Index 2: 我的')
   ];
 
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.event),
-            title: Text('任务')
+            title: Text('计划')
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
