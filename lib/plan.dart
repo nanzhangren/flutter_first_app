@@ -42,12 +42,7 @@ class Plan extends StatelessWidget {
             child: new TabBarView(
               physics: new NeverScrollableScrollPhysics(),
               children: _allPages.map((HeaderItemBean page) {
-                return new Column(
-                  children: <Widget>[
-                    new Task(content: page.labelTitle),
-                    new Task(content: page.labelTitle)
-                  ]
-                );
+                return new Task(items: ['111', '222', '333', '444', '555', '666', '777', '888', '999']);
               }).toList()
             )
           )
