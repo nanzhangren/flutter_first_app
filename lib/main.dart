@@ -50,8 +50,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('流水账'),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(52),
+        child: AppBar(
+          title: Text('流水账'),
+          centerTitle: true,
+          backgroundColor: Colors.white70,
+          brightness: Brightness.light
+        )
       ),
       body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

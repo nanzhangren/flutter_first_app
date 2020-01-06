@@ -35,8 +35,19 @@ class _TaskState extends State<Task> {
         return new Slidable(
           actionPane: SlidableDrawerActionPane(),
           actionExtentRatio: 0.35,
-          child: ListTile(
-            title: Text(_items[index])
+          child: Container(
+            decoration: new BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 0.3,
+                  color: Colors.grey,
+                  style: BorderStyle.solid
+                )
+              )
+            ),
+            child: ListTile(
+              title: Text(_items[index])
+            )
           ),
           actions: <Widget>[
             new IconSlideAction(

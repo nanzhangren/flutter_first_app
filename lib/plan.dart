@@ -23,12 +23,13 @@ class Plan extends StatelessWidget {
         children: <Widget>[
           new Container(
             padding: EdgeInsets.all(10.0),
-            color: Colors.lightBlue,
+            color: Colors.white,
             child: new AspectRatio(
               aspectRatio: 8.0,
               child: new TabBar(
                 indicatorSize: TabBarIndicatorSize.tab,
                 indicatorWeight: 2.0,
+                labelColor: Colors.black,
                 labelStyle: new TextStyle(
                   fontSize: 16.0
                 ),
