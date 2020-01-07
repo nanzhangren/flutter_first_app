@@ -49,11 +49,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
+    return new Scaffold(
+      appBar: new PreferredSize(
         preferredSize: Size.fromHeight(52),
-        child: AppBar(
-          title: Text('流水账'),
+        child: new AppBar(
+          title: new Text('流水账'),
           centerTitle: true,
           backgroundColor: Colors.white70,
           brightness: Brightness.light

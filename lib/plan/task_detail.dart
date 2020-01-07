@@ -1,75 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_seekbar/flutter_seekbar.dart' show SeekBar;
+
 import '../common/resource.dart';
 
-class Task extends StatefulWidget {
-  Task({Key key, this.items}) : super(key: key);
+class TaskDetail extends StatefulWidget {
+  TaskDetail({Key key, this.item}) : super(key: key);
 
-  @required final List<String> items;
+  @required final Map item;
 
   @override
-  _TaskState createState() => _TaskState();
+  _TaskDetailState createState() => _TaskDetailState();
 }
 
-class _TaskState extends State<Task> {
-  Color backColor = Colors.white;
-
-  void markDone() {
-    setState(() {
-      if (backColor == Colors.white) {
-        backColor = Colors.red;
-      } else {
-        backColor = Colors.white;
-      }
-    });
-  }
-
+class _TaskDetailState extends State<TaskDetail> {
   @override
   Widget build(BuildContext context) {
-    final _items = widget.items;
-    final SlidableController _slidableController = new SlidableController();
-
-    return ListView.builder(
-      itemCount: _items.length,
-      itemBuilder: (context, index) {
-        return new Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.23,
-          child: Container(
-            decoration: new BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: 0.3,
-                  color: Colors.grey,
-                  style: BorderStyle.solid
+    return new Scaffold(
+      appBar: new PreferredSize(
+        preferredSize: Size.fromHeight(52),
+        child: new AppBar(
+          title: new Text('流水账'),
+          centerTitle: true,
+          backgroundColor: Colors.white70,
+          brightness: Brightness.light
+        )
+      ),
+      body: new Form(
+        child: new Container(
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              new Container(
+                height: 60.0,
+                child: new TextFormField(
+                  decoration: new InputDecoration(
+                    labelText: Resource.taskContentLabel
+                  ),
+                  initialValue: widget.item['value']
+                )
+              ),
+              new Container(
+                height: 25.0,
+                margin: EdgeInsets.symmetric(vertical: 40.0),
+                child: new SeekBar(
+                  progresseight: 10.0,
+                  min: 0,
+                  max: 100,
+                  value: 75,
+                  sectionCount: 4,
+                  showSectionText: true
+                )
+              ),
+              new Container(
+                width: 360.0,
+                height: 42.0,
+                child: new RaisedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: new Text(
+                    Resource.taskSubmit,
+                    style: new TextStyle(
+                      fontSize: 18.0
+                    )
+                  )
                 )
               )
-            ),
-            child: ListTile(
-              title: Text(_items[index])
-            )
-          ),
-          secondaryActions: <Widget>[
-            new IconSlideAction(
-              caption: Resource.edit,
-              color: Colors.green,
-              icon: Icons.edit,
-              onTap: () => {
-                //
-              }
-            ),
-            new IconSlideAction(
-              caption: Resource.done,
-              color: Colors.grey,
-              icon: Icons.done,
-              onTap: () => {
-                //
-              }
-            )
-          ],
-          controller: _slidableController
-        );
-      }
+            ]
+          )
+        )
+      )
     );
   }
 }

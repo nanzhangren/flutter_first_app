@@ -12,4 +12,9 @@ class Resource {
 
   static String done = '完成';
   static String doing = '正在做';
+
+  static String taskContentLabel = '任务内容';
+  static String taskProcessLabel = '任务进展';
+  static String taskOwnerLabel = '任务归属';
+  static String taskSubmit = '提交';
 }

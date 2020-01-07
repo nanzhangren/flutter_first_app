@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+
 import '../common/resource.dart';
+import './task_detail.dart';
 
 class TaskItem extends StatefulWidget {
   TaskItem({Key key, this.items}) : super(key: key);
@@ -12,18 +14,6 @@ class TaskItem extends StatefulWidget {
 }
 
 class _TaskItemState extends State<TaskItem> {
-  Color backColor = Colors.white;
-
-  void markDone() {
-    setState(() {
-      if (backColor == Colors.white) {
-        backColor = Colors.red;
-      } else {
-        backColor = Colors.white;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final _items = widget.items;
@@ -33,6 +23,8 @@ class _TaskItemState extends State<TaskItem> {
       itemCount: _items.length,
       itemBuilder: (context, index) {
         final tempItem = _items[index];
+        final value = tempItem['value'];
+        final done = tempItem['done'];
         return new Slidable(
           actionPane: SlidableDrawerActionPane(),
           actionExtentRatio: 0.23,
@@ -47,7 +39,7 @@ class _TaskItemState extends State<TaskItem> {
               )
             ),
             child: ListTile(
-              title: Text(tempItem['value'])
+              title: Text(value)
             )
           ),
           secondaryActions: <Widget>[
@@ -56,13 +48,20 @@ class _TaskItemState extends State<TaskItem> {
               color: Colors.green,
               icon: Icons.edit,
               onTap: () {
-                //
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                    builder: (context) => new TaskDetail(item: {
+                      value: 'aaaaaaaa'
+                    })
+                  )
+                );
               }
             ),
             new IconSlideAction(
-              caption: tempItem['done'] ? Resource.done : Resource.doing,
-              color: Colors.grey,
-              icon: tempItem['done'] ? Icons.mood : Icons.mood_bad,
+              caption: done ? Resource.done : Resource.doing,
+              color: done ? Colors.grey : Colors.red,
+              icon: done ? Icons.mood : Icons.mood_bad,
               onTap: () {
                 setState(() {
                   tempItem['done'] = !tempItem['done'];
