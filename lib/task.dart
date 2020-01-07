@@ -34,7 +34,7 @@ class _TaskState extends State<Task> {
       itemBuilder: (context, index) {
         return new Slidable(
           actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.35,
+          actionExtentRatio: 0.23,
           child: Container(
             decoration: new BoxDecoration(
               border: Border(
@@ -49,11 +49,19 @@ class _TaskState extends State<Task> {
               title: Text(_items[index])
             )
           ),
-          actions: <Widget>[
+          secondaryActions: <Widget>[
+            new IconSlideAction(
+              caption: Resource.edit,
+              color: Colors.green,
+              icon: Icons.edit,
+              onTap: () => {
+                //
+              }
+            ),
             new IconSlideAction(
               caption: Resource.done,
-              color: Colors.green,
-              icon: Icons.email,
+              color: Colors.grey,
+              icon: Icons.done,
               onTap: () => {
                 //
               }
