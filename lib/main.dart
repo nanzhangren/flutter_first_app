@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './common/resource.dart';
-import './calendar.dart';
-import './plan.dart';
+import './calendar/calendar.dart';
+import './plan/plan.dart';
 
 void main() => runApp(App());
 

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import './common/resource.dart';
+import '../common/resource.dart';
 
-class Task extends StatefulWidget {
-  Task({Key key, this.items}) : super(key: key);
+class TaskItem extends StatefulWidget {
+  TaskItem({Key key, this.items}) : super(key: key);
 
-  @required final List<String> items;
+  @required final List<Map> items;
 
   @override
-  _TaskState createState() => _TaskState();
+  _TaskItemState createState() => _TaskItemState();
 }
 
-class _TaskState extends State<Task> {
+class _TaskItemState extends State<TaskItem> {
   Color backColor = Colors.white;
 
   void markDone() {
@@ -32,6 +32,7 @@ class _TaskState extends State<Task> {
     return ListView.builder(
       itemCount: _items.length,
       itemBuilder: (context, index) {
+        final tempItem = _items[index];
         return new Slidable(
           actionPane: SlidableDrawerActionPane(),
           actionExtentRatio: 0.23,
@@ -46,7 +47,7 @@ class _TaskState extends State<Task> {
               )
             ),
             child: ListTile(
-              title: Text(_items[index])
+              title: Text(tempItem['value'])
             )
           ),
           secondaryActions: <Widget>[
@@ -54,16 +55,18 @@ class _TaskState extends State<Task> {
               caption: Resource.edit,
               color: Colors.green,
               icon: Icons.edit,
-              onTap: () => {
+              onTap: () {
                 //
               }
             ),
             new IconSlideAction(
-              caption: Resource.done,
+              caption: tempItem['done'] ? Resource.done : Resource.doing,
               color: Colors.grey,
-              icon: Icons.done,
-              onTap: () => {
-                //
+              icon: tempItem['done'] ? Icons.mood : Icons.mood_bad,
+              onTap: () {
+                setState(() {
+                  tempItem['done'] = !tempItem['done'];
+                });
               }
             )
           ],

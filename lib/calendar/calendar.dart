@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import './common/util_day.dart';
-import './common/util_week.dart';
-import './common/resource.dart';
+import '../common/util_day.dart';
+import '../common/util_week.dart';
+import '../common/resource.dart';
 
 class _CalendarDay extends StatelessWidget {
   final String dayValue;
