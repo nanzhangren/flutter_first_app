@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import './task_item.dart';
+import '../common/resource.dart';
 
 class HeaderItemBean {
   final String labelTitle;
@@ -8,10 +10,10 @@ class HeaderItemBean {
 }
 
 final List<HeaderItemBean> _allPages = <HeaderItemBean>[
-  new HeaderItemBean('今天'),
-  new HeaderItemBean('本周'),
-  new HeaderItemBean('本月'),
-  new HeaderItemBean('今年')
+  new HeaderItemBean(Resource.planTitleToday),
+  new HeaderItemBean(Resource.planTitleThisWeek),
+  new HeaderItemBean(Resource.planTitleThisMonth),
+  new HeaderItemBean(Resource.planTitleThisYear)
 ];
 
 class Plan extends StatelessWidget {
@@ -43,44 +45,47 @@ class Plan extends StatelessWidget {
             child: new TabBarView(
               physics: new NeverScrollableScrollPhysics(),
               children: _allPages.map((HeaderItemBean page) {
-                return new TaskItem(items: [
-                  {
-                    'value': '111',
-                    'done': true,
-                  },
-                  {
-                    'value': 'bbb',
-                    'done': false,
-                  },
-                  {
-                    'value': 'ccc',
-                    'done': false,
-                  },
-                  {
-                    'value': '444',
-                    'done': false,
-                  },
-                  {
-                    'value': '555',
-                    'done': true,
-                  },
-                  {
-                    'value': '666',
-                    'done': false,
-                  },
-                  {
-                    'value': '777',
-                    'done': true,
-                  },
-                  {
-                    'value': '888',
-                    'done': false,
-                  },
-                  {
-                    'value': '999',
-                    'done': false,
-                  }
-                ]);
+                return new TaskItem(
+                  title: page.labelTitle,
+                  items: [
+                    {
+                      'value': '111',
+                      'done': true,
+                    },
+                    {
+                      'value': 'bbb',
+                      'done': false,
+                    },
+                    {
+                      'value': 'ccc',
+                      'done': false,
+                    },
+                    {
+                      'value': '444',
+                      'done': false,
+                    },
+                    {
+                      'value': '555',
+                      'done': true,
+                    },
+                    {
+                      'value': '666',
+                      'done': false,
+                    },
+                    {
+                      'value': '777',
+                      'done': true,
+                    },
+                    {
+                      'value': '888',
+                      'done': false,
+                    },
+                    {
+                      'value': '999',
+                      'done': false,
+                    }
+                  ]
+                );
               }).toList()
             )
           )

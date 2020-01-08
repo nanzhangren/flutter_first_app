@@ -5,8 +5,9 @@ import '../common/resource.dart';
 import './task_detail.dart';
 
 class TaskItem extends StatefulWidget {
-  TaskItem({Key key, this.items}) : super(key: key);
+  TaskItem({Key key, this.title, this.items}) : super(key: key);
 
+  @required final String title;
   @required final List<Map> items;
 
   @override
@@ -51,9 +52,12 @@ class _TaskItemState extends State<TaskItem> {
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
-                    builder: (context) => new TaskDetail(item: {
-                      value: 'aaaaaaaa'
-                    })
+                    builder: (context) => new TaskDetail(
+                      title: widget.title,
+                      item: {
+                        'value': 'aaaaaaaa'
+                        }
+                    )
                   )
                 );
               }

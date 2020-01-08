@@ -170,13 +170,13 @@ class _CalendarState extends State<Calendar> {
   }
 
   DropdownButton _getMonthButton() {
-    List<DropdownMenuItem> dropdownItems = <DropdownMenuItem>[];
-    for (int i = 1; i <= 12; i++) {
-      dropdownItems.add(new DropdownMenuItem(
-        child: new Text(i.toString() + Resource.monthUnit),
-        value: i,
-      ));
-    }
+    List<DropdownMenuItem> dropdownItems = List.generate(
+      12,
+      (index) => new DropdownMenuItem(
+        child: new Text(index.toString() + Resource.monthUnit),
+        value: index
+      )
+    );
     return new DropdownButton(
       items: dropdownItems,
       hint: new Text('请选择：'),

@@ -7,6 +7,11 @@ class Resource {
   static String monthUnit = '月';
   static String yearUnit = '年';
 
+  static String planTitleToday = '今天';
+  static String planTitleThisWeek = '本周';
+  static String planTitleThisMonth = '本月';
+  static String planTitleThisYear = '今年';
+
   static String edit = '编辑';
   static String delete = '删除';
 

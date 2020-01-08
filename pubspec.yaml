@@ -26,6 +26,7 @@ dependencies:
   flutter_slidable: ^0.5.4
   flutter_seekbar:
     git: https://github.com/LiuC520/flutter_seekbar.git
+  multiple_select: ^0.1.20
 
 dev_dependencies:
   flutter_test:
