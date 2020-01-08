@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import './common/resource.dart';
 import './calendar/calendar.dart';
 import './plan/plan.dart';
@@ -53,26 +54,26 @@ class _HomePageState extends State<HomePage> {
       appBar: new PreferredSize(
         preferredSize: Size.fromHeight(52),
         child: new AppBar(
-          title: new Text('流水账'),
+          title: new Text(Resource.appTitle),
           centerTitle: true,
           backgroundColor: Colors.white70,
           brightness: Brightness.light
         )
       ),
       body: _widgetOptions[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: new BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_view_day),
-            title: Text('日历')
+          new BottomNavigationBarItem(
+            icon: new Icon(Icons.calendar_view_day),
+            title: new Text(Resource.mainBottomNavCalendar)
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            title: Text('计划')
+          new BottomNavigationBarItem(
+            icon: new Icon(Icons.event),
+            title: new Text(Resource.mainBottomNavPlan)
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            title: Text('我的')
+          new BottomNavigationBarItem(
+            icon: new Icon(Icons.person),
+            title: new Text(Resource.mainBottomNavMe)
           )
         ],
         currentIndex: _selectedIndex,

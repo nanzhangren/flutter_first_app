@@ -3,6 +3,10 @@ class Resource {
 
   static String appTitle = '流水账';
 
+  static String mainBottomNavCalendar = '日历';
+  static String mainBottomNavPlan = '计划';
+  static String mainBottomNavMe = '我的';
+
   static String selectTip = '请选择：';
   static String monthUnit = '月';
   static String yearUnit = '年';

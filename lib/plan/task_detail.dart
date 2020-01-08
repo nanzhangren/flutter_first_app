@@ -93,8 +93,7 @@ class TaskDetail extends StatefulWidget {
 class _TaskDetailState extends State<TaskDetail> {
   List _selectedValues = [];
 
-  MultipleDropDown _getTaskRange() {
-    final taskList = taskRange[Resource.planTitleThisYear];
+  MultipleDropDown _getTaskRange(List<Map> taskList) {
     List<MultipleSelectItem> dropdownItems = List.generate(
       taskList.length,
       (index) => MultipleSelectItem.build(
@@ -113,6 +112,15 @@ class _TaskDetailState extends State<TaskDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final String title = widget.title;
+    List<Map> taskList = [];
+    if (title == Resource.planTitleThisYear
+      || title == Resource.planTitleThisMonth) {
+      taskList = taskRange[title];
+    } else if (title == Resource.planTitleThisWeek) {
+      taskList = [];
+    }
+
     return new Scaffold(
       appBar: new PreferredSize(
         preferredSize: Size.fromHeight(52),
@@ -144,7 +152,7 @@ class _TaskDetailState extends State<TaskDetail> {
                   ),
                   new Container(
                     height: 60.0,
-                    child: _getTaskRange()
+                    child: _getTaskRange(taskList)
                   ),
                   new Container(
                     height: 25.0,
