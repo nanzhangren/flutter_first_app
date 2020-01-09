@@ -323,7 +323,15 @@ class _CalendarState extends State<Calendar> {
     if (widget.selectedDay != null) {
       _selectedDay = widget.selectedDay;
     }
-    _shownDays = UtilDay.getCurrentMonthShownDays(_firstShownWeekday);
+    if (widget.selectedYear != null && widget.selectedMonth != null && widget.selectedDay != null) {
+      _shownDays = UtilDay.getMonthShownDays(
+        widget.selectedYear,
+        widget.selectedMonth,
+        _firstShownWeekday
+      );
+    } else {
+      _shownDays = UtilDay.getCurrentMonthShownDays(_firstShownWeekday);
+    }
 
     final yearArr = UtilDay.getYears();
     yearArr.forEach((year) {

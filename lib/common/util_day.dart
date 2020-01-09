@@ -26,6 +26,13 @@ class UtilDay {
     }
   }
 
+  static int getPreviousMonthDays(int year, int month) {
+    if (month == 1) {
+      return getTheMonthDays(year - 1, 12);
+    }
+    return getTheMonthDays(year, month - 1);
+  }
+
   static int getLeftDaysOfMonth(int year, int month, int day) {
     final monthDays = getTheMonthDays(year, month);
     return monthDays - day;
@@ -78,21 +85,21 @@ class UtilDay {
     //      本月第一周剩余天数 = 本月第一天星期数 - 开始星期数
     // （2）本月第一天星期数 < 开始星期数【else 逻辑】
     //      本月第一周剩余天数分为两段，星期日之前 + 星期日之后
-    //      星期日之前天数 = 7 - 开始星期数 + 1
+    //      星期日之前天数 = 7 - 开始星期数 + 1 = 8 - 开始星期数
     //      星期日之后天数 = 本月第一天星期数 - 1
     final monthFirstWeekDay = new DateTime(year, month, 1).weekday;
-    int previousMonthDays = 0;
+    int previousMonthShownDays = 0;
     if (monthFirstWeekDay >= firstShownWeekday) {
-      previousMonthDays += monthFirstWeekDay - firstShownWeekday;
+      previousMonthShownDays += monthFirstWeekDay - firstShownWeekday;
     } else {
-      previousMonthDays += 8 - firstShownWeekday;
-      previousMonthDays += monthFirstWeekDay - 1;
+      previousMonthShownDays += 8 - firstShownWeekday;
+      previousMonthShownDays += monthFirstWeekDay - 1;
     }
-    final lastMonthDays = getTheMonthDays(year, month - 1);
+    final previousMonthDays = getPreviousMonthDays(year, month);
     // 第一个展示的上月日期
-    int firstShownDay = lastMonthDays - previousMonthDays + 1;
+    int firstShownDay = previousMonthDays - previousMonthShownDays + 1;
     // 上一月剩余日期
-    for (int i = firstShownDay; i <= lastMonthDays; i++) {
+    for (int i = firstShownDay; i <= previousMonthDays; i++) {
       shownDays.add(i);
     }
 
@@ -112,26 +119,26 @@ class UtilDay {
     //      星期日之后天数 = 结束星期数
     final monthLastWeekDay = new DateTime(year, month, currentMonthDays).weekday;
     final lastShownWeekday = firstShownWeekday == 1 ? 7 : firstShownWeekday - 1;
-    int nextMonthDays = 0;
+    int nextMonthShownDays = 0;
     if (lastShownWeekday >= monthLastWeekDay) {
-      nextMonthDays += lastShownWeekday - monthLastWeekDay;
+      nextMonthShownDays += lastShownWeekday - monthLastWeekDay;
     } else {
-      nextMonthDays += 7 - monthLastWeekDay;
-      nextMonthDays += lastShownWeekday;
+      nextMonthShownDays += 7 - monthLastWeekDay;
+      nextMonthShownDays += lastShownWeekday;
     }
 
     /* 日历显示 6 行，所以周数不够时下个月天数增加一周 */
-    if (shownDays.length + nextMonthDays == 35) {
-      nextMonthDays += 7;
+    if (shownDays.length + nextMonthShownDays == 35) {
+      nextMonthShownDays += 7;
     }
 
     /* 润 2 月只有 28 天，有可能不够 6 行，此处需要进行判断 */
-    if (shownDays.length + nextMonthDays == 35 /* (5 * 7) */) {
-      nextMonthDays += 7;
+    if (shownDays.length + nextMonthShownDays == 35 /* (5 * 7) */) {
+      nextMonthShownDays += 7;
     }
 
     // 添加下个月天数
-    for (int i = 1; i <= nextMonthDays; i++) {
+    for (int i = 1; i <= nextMonthShownDays; i++) {
       shownDays.add(i);
     }
     return shownDays;
