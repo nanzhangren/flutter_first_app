@@ -5,8 +5,18 @@ import '../common/resource.dart';
 import './task_detail.dart';
 
 class TaskItem extends StatefulWidget {
-  TaskItem({Key key, this.title, this.items}) : super(key: key);
+  TaskItem({
+    Key key,
+    this.selectedYear,
+    this.selectedMonth,
+    this.selectedDay,
+    this.title,
+    this.items
+  }) : super(key: key);
 
+  @required final int selectedYear;
+  @required final int selectedMonth;
+  @required final int selectedDay;
   @required final String title;
   @required final List<Map> items;
 
@@ -53,10 +63,13 @@ class _TaskItemState extends State<TaskItem> {
                   context,
                   new MaterialPageRoute(
                     builder: (context) => new TaskDetail(
+                      selectedYear: widget.selectedYear,
+                      selectedMonth: widget.selectedMonth,
+                      selectedDay: widget.selectedDay,
                       title: widget.title,
                       item: {
                         'value': 'aaaaaaaa'
-                        }
+                      }
                     )
                   )
                 );

@@ -29,27 +29,41 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 1;
-  final _widgetOptions = [
-    new ListView(
-      shrinkWrap: true,
-      padding: const EdgeInsets.all(10.0),
-      children: <Widget>[
-        new Calendar()
-      ]
-    ),
-    new Plan(),
-    Text('Index 2: 我的')
-  ];
+  int _selectedBottomNavIndex = 1;
+  int _selectedYear;
+  int _selectedMonth;
+  int _selectedDay;
+
+  void _onSelectedChange(int selectedYear, int selectedMonth, int selectedDay) {
+    _selectedYear = selectedYear;
+    _selectedMonth = selectedMonth;
+    _selectedDay = selectedDay;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedBottomNavIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final _widgetOptions = [
+      new ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(10.0),
+        children: <Widget>[
+          new Calendar(
+            selectedYear: _selectedYear,
+            selectedMonth: _selectedMonth,
+            selectedDay: _selectedDay,
+            onSelectedChange: _onSelectedChange
+          )
+        ]
+      ),
+      new Plan(_selectedYear, _selectedMonth, _selectedDay),
+      Text('Index 2: 我的')
+    ];
     return new Scaffold(
       appBar: new PreferredSize(
         preferredSize: Size.fromHeight(52),
@@ -60,7 +74,7 @@ class _HomePageState extends State<HomePage> {
           brightness: Brightness.light
         )
       ),
-      body: _widgetOptions[_selectedIndex],
+      body: _widgetOptions[_selectedBottomNavIndex],
       bottomNavigationBar: new BottomNavigationBar(
         items: [
           new BottomNavigationBarItem(
@@ -76,7 +90,7 @@ class _HomePageState extends State<HomePage> {
             title: new Text(Resource.mainBottomNavMe)
           )
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: _selectedBottomNavIndex,
         fixedColor: Colors.deepPurple,
         onTap: _onItemTapped,
       ),

@@ -4,6 +4,7 @@ import 'package:multiple_select/multi_drop_down.dart';
 import 'package:multiple_select/multiple_select.dart';
 
 import '../common/resource.dart';
+import '../common/util_day.dart';
 
 Map taskRange = {
   Resource.planTitleThisYear: [
@@ -81,8 +82,18 @@ Map taskRange = {
 };
 
 class TaskDetail extends StatefulWidget {
-  TaskDetail({Key key, this.title, this.item}) : super(key: key);
+  TaskDetail({
+    Key key,
+    this.selectedYear,
+    this.selectedMonth,
+    this.selectedDay,
+    this.title,
+    this.item
+  }) : super(key: key);
 
+  @required final int selectedYear;
+  @required final int selectedMonth;
+  @required final int selectedDay;
   @required final String title;
   @required final Map item;
 
@@ -118,9 +129,14 @@ class _TaskDetailState extends State<TaskDetail> {
       || title == Resource.planTitleThisMonth) {
       taskList = taskRange[title];
     } else if (title == Resource.planTitleThisWeek) {
-      taskList = [];
+      final List<int> weekDays = UtilDay.getTheWeekDays(widget.selectedYear, widget.selectedMonth, widget.selectedDay);
+      taskList = weekDays.map((int day) {
+        return {
+          'text': day.toString(),
+          'value': day
+        };
+      }).toList();
     }
-
     return new Scaffold(
       appBar: new PreferredSize(
         preferredSize: Size.fromHeight(52),
@@ -150,10 +166,10 @@ class _TaskDetailState extends State<TaskDetail> {
                       ))
                     )
                   ),
-                  new Container(
+                  title != Resource.planTitleToday ? new Container(
                     height: 60.0,
                     child: _getTaskRange(taskList)
-                  ),
+                  ) : new Container(),
                   new Container(
                     height: 25.0,
                     margin: EdgeInsets.symmetric(vertical: 40.0),

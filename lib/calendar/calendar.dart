@@ -61,18 +61,31 @@ class _CalendarDay extends StatelessWidget {
 }
 
 class Calendar extends StatefulWidget {
+  Calendar({
+    Key key,
+    this.selectedYear,
+    this.selectedMonth,
+    this.selectedDay,
+    this.onSelectedChange
+  }) : super(key: key);
+
+  final int selectedYear;
+  final int selectedMonth;
+  final int selectedDay;
+  final Function onSelectedChange;
+
   @override
   _CalendarState createState() => _CalendarState();
 }
 
 class _CalendarState extends State<Calendar> {
-  int _selectedYear = new DateTime.now().year;
-  int _selectedMonth = new DateTime.now().month;
   List<DropdownMenuItem> _yearDropdownItems = <DropdownMenuItem>[];
   int _firstShownWeekday = 7;
   List<int> _shownDays;
   int _maxYear = UtilDay.maxYear;
-  int _selectedDay = 0;
+  int _selectedYear = new DateTime.now().year;
+  int _selectedMonth = new DateTime.now().month;
+  int _selectedDay = new DateTime.now().day;
 
   _onYearChange(int value) {
     setState(() {
@@ -90,7 +103,7 @@ class _CalendarState extends State<Calendar> {
 
   _onLeftButtonClicked() {
     setState(() {
-      // Varify the minimum year.
+      // 验证最小年份
       if (_selectedYear == UtilDay.minYear && _selectedMonth == 1) {
         return;
       }
@@ -116,7 +129,7 @@ class _CalendarState extends State<Calendar> {
         _maxYear = _selectedYear;
         _yearDropdownItems.add(
           new DropdownMenuItem(
-            child: new Text(_selectedYear.toString() + '年'),
+            child: new Text(_selectedYear.toString() + Resource.yearUnit),
             value: _selectedYear
           )
         );
@@ -142,15 +155,15 @@ class _CalendarState extends State<Calendar> {
     final int currentDay = currentDate.day;
     int currentDayIndex = -1;
 
-    // Current month is selected, the highlight day is in the middle of calendar view.
+    // 本月被选中时，高亮日期在日历中央
     if (_selectedMonth == currentMonth) {
       currentDayIndex = days.indexOf(currentDay, firstDayIndex);
     }
-    // Previous month is selected, the highlight day may be in the bottom of calendar view.
+    // 上一月被选中时，高亮日期可能在日历底部
     else if (_selectedMonth == currentMonth - 1) {
       currentDayIndex = days.indexOf(currentDay, lastDayIndex + 1);
     }
-    // Next month is selected, the highlight day may be in the top of calendar view.
+    // 下一月被选中时，高亮日期可能在日历顶部
     else if (_selectedMonth == currentMonth + 1) {
       currentDayIndex = days.take(firstDayIndex).toList().indexOf(currentDay);
     }
@@ -179,7 +192,7 @@ class _CalendarState extends State<Calendar> {
     );
     return new DropdownButton(
       items: dropdownItems,
-      hint: new Text('请选择：'),
+      hint: new Text(Resource.selectTip),
       value: _selectedMonth,
       underline: new Container(),
       onChanged: (newValue) {
@@ -261,7 +274,7 @@ class _CalendarState extends State<Calendar> {
     final int firstDayIndex = days.indexOf(1);
     int lastDayIndex = days.lastIndexOf(1);
 
-    // Verify the value of lastDayIndex.
+    // 验证 lastDayIndex 的值
     if (lastDayIndex == -1) {
       lastDayIndex = days.length - 1;
     } else {
@@ -301,6 +314,15 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
 
+    if (widget.selectedYear != null) {
+      _selectedYear = widget.selectedYear;
+    }
+    if (widget.selectedMonth != null) {
+      _selectedMonth = widget.selectedMonth;
+    }
+    if (widget.selectedDay != null) {
+      _selectedDay = widget.selectedDay;
+    }
     _shownDays = UtilDay.getCurrentMonthShownDays(_firstShownWeekday);
 
     final yearArr = UtilDay.getYears();
@@ -314,6 +336,10 @@ class _CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    // 组件更新时触发 onSelectedChange 事件
+    if (widget.onSelectedChange != null) {
+      widget.onSelectedChange(_selectedYear, _selectedMonth, _selectedDay);
+    }
     return new ListView(
       shrinkWrap: true,
       children: <Widget>[

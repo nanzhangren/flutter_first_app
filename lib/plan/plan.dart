@@ -17,6 +17,12 @@ final List<HeaderItemBean> _allPages = <HeaderItemBean>[
 ];
 
 class Plan extends StatelessWidget {
+  Plan(this.selectedYear, this.selectedMonth, this.selectedDay);
+
+  @required final int selectedYear;
+  @required final int selectedMonth;
+  @required final int selectedDay;
+
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
@@ -46,6 +52,9 @@ class Plan extends StatelessWidget {
               physics: new NeverScrollableScrollPhysics(),
               children: _allPages.map((HeaderItemBean page) {
                 return new TaskItem(
+                  selectedYear: selectedYear,
+                  selectedMonth: selectedMonth,
+                  selectedDay: selectedDay,
                   title: page.labelTitle,
                   items: [
                     {
