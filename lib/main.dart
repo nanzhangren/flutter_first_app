@@ -29,7 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedBottomNavIndex = 1;
+  int _selectedBottomNavIndex = 0;
   int _selectedYear;
   int _selectedMonth;
   int _selectedDay;
@@ -62,7 +62,14 @@ class _HomePageState extends State<HomePage> {
         ]
       ),
       new Plan(_selectedYear, _selectedMonth, _selectedDay),
-      Text('Index 2: 我的')
+      new ListView(
+        shrinkWrap: true,
+        // physics: NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(10.0),
+        children: <Widget>[
+          new Text('Index 2: 我的')
+        ]
+      )
     ];
     return new Scaffold(
       appBar: new PreferredSize(
@@ -71,7 +78,16 @@ class _HomePageState extends State<HomePage> {
           title: new Text(Resource.appTitle),
           centerTitle: true,
           backgroundColor: Colors.white70,
-          brightness: Brightness.light
+          brightness: Brightness.light,
+          actions: _selectedBottomNavIndex != 2 ? <Widget>[
+            new IconButton(
+              icon: new Icon(Icons.add_circle_outline),
+              color: Colors.black,
+              onPressed: () {
+                //
+              }
+            )
+          ] : []
         )
       ),
       body: _widgetOptions[_selectedBottomNavIndex],
